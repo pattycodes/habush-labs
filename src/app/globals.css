@@ -1,13 +1,13 @@
 @import "tailwindcss";
 
 :root {
-  --background: #0e0e0e;
-  --background-dark: #080808;
-  --foreground: #d4d4d4;
-  --yellow: #B8960F;
-  --red: #8B3A3A;
-  --muted: #5a5a5a;
-  --border: #1f1f1f;
+  --background: #0a0a0a;
+  --background-dark: #050505;
+  --foreground: #c8c8c8;
+  --yellow: #C4581A;
+  --red: #7A2E2E;
+  --muted: #484848;
+  --border: #161616;
 }
 
 @theme inline {
@@ -40,13 +40,13 @@ html {
 /* Pixel-style gradient for hero */
 .pixel-gradient {
   background: linear-gradient(180deg,
-    #2a2015 0%,
-    #1f1a0e 8%,
-    #3d3010 20%,
-    #3a2510 40%,
-    #351a15 60%,
-    #2d1515 80%,
-    #1a0e0e 100%
+    #251510 0%,
+    #1e1008 8%,
+    #3a1c0a 20%,
+    #321508 40%,
+    #281008 60%,
+    #1e0a06 80%,
+    #120505 100%
   );
   image-rendering: pixelated;
 }

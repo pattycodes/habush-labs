@@ -1,5 +1,3 @@
-import SnakeIcon from "./snake-icon";
-
 export default function Nav() {
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-6 py-4 md:px-10 bg-black border-b border-border">
@@ -7,7 +5,7 @@ export default function Nav() {
         href="#"
         className="flex items-center gap-2 text-base md:text-lg font-mono font-bold tracking-wider uppercase text-foreground"
       >
-        <SnakeIcon className="w-5 h-5 md:w-6 md:h-6 text-yellow" />
+        <img src="/habush_svg.svg" alt="Habush" className="w-8 h-8 md:w-9 md:h-9 scale-x-[-1]" />
         HABUSH<span className="text-yellow">.</span>LABS
       </a>
       <div className="flex items-center gap-6 md:gap-8">
@@ -30,7 +28,9 @@ export default function Nav() {
           &gt; CONTACT
         </a>
         <a
-          href="#contact"
+          href="https://cal.com/habush"
+          target="_blank"
+          rel="noopener noreferrer"
           className="text-xs font-mono font-bold tracking-wider uppercase bg-yellow text-black px-5 py-2.5 hover:bg-yellow/80 transition-colors"
         >
           BOOK A CALL

@@ -8,7 +8,7 @@ export default function Hero() {
         <WaveBg />
 
         <div className="relative z-10">
-          <h1 className="animate-fade-up text-4xl sm:text-5xl md:text-7xl lg:text-8xl font-mono font-bold uppercase leading-[0.95] tracking-tight text-foreground">
+          <h1 className="animate-fade-up text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-mono font-bold uppercase leading-[0.95] tracking-tight text-foreground">
             WE ARE THE
             <br />
             PREMIERE <span className="text-foreground/60">APP &</span>
@@ -17,7 +17,9 @@ export default function Hero() {
           </h1>
           <div className="animate-fade-up-delay-2 mt-8">
             <a
-              href="#contact"
+              href="https://cal.com/habush"
+              target="_blank"
+              rel="noopener noreferrer"
               className="inline-block text-xs font-mono font-bold tracking-wider uppercase bg-yellow text-black px-6 py-3 hover:bg-yellow/80 transition-colors"
             >
               BOOK A CALL

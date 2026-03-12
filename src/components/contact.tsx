@@ -18,16 +18,18 @@ export default function Contact() {
         </h2>
         <div className="mt-10 flex flex-col sm:flex-row gap-4 justify-center">
           <a
-            href="mailto:hello@habushlabs.com"
+            href="https://cal.com/habush"
+            target="_blank"
+            rel="noopener noreferrer"
             className="inline-block text-xs font-mono font-bold tracking-wider uppercase bg-yellow text-black px-8 py-4 hover:bg-yellow/80 transition-colors"
           >
             BOOK A CALL
           </a>
           <a
-            href="mailto:hello@habushlabs.com"
+            href="mailto:hello@habush.ai"
             className="inline-block text-xs font-mono font-bold tracking-wider uppercase border border-border text-foreground px-8 py-4 hover:border-yellow hover:text-yellow transition-colors"
           >
-            HELLO@HABUSHLABS.COM
+            HELLO@HABUSH.AI
           </a>
         </div>
       </div>

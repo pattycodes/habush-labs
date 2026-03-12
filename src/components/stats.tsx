@@ -1,6 +1,6 @@
 const stats = [
   { value: ">100M", label: "VIEWS ACCOMPLISHED" },
-  { value: ">$1M", label: "REVENUE GENERATED" },
+  { value: "$5M+", label: "REVENUE GENERATED" },
   { value: "$52M", label: "EXIT ACHIEVED" },
   { value: "9+", label: "PROJECTS LAUNCHED" },
 ];

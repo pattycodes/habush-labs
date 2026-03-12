@@ -185,7 +185,7 @@ export default function Portfolio() {
               {/* Header */}
               <div className="flex items-start justify-between mb-4">
                 <h3
-                  className={`text-lg md:text-xl font-mono font-bold uppercase text-foreground transition-all duration-300 ${!isRevealed ? "blur-sm select-none" : ""}`}
+                  className="text-lg md:text-xl font-mono font-bold uppercase text-foreground"
                 >
                   {displayTitle}
                 </h3>

@@ -11,9 +11,11 @@ export default function Hero() {
           <h1 className="animate-fade-up text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-mono font-bold uppercase leading-[0.95] tracking-tight text-foreground">
             WE ARE THE
             <br />
-            PREMIERE <span className="text-foreground/60">APP &</span>
+            PREMIERE
             <br />
-            <span className="text-foreground/60">MARKETING</span> STUDIO
+            <span className="text-foreground/60">APP & MARKETING</span>
+            <br />
+            STUDIO
           </h1>
           <div className="animate-fade-up-delay-2 mt-8">
             <a

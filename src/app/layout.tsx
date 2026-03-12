@@ -19,12 +19,14 @@ export const metadata: Metadata = {
       "We build apps, software, and market brands. A subsidiary of H3AT Studios.",
     siteName: "HABUSH LABS",
     type: "website",
+    images: [{ url: "/og-image.png" }],
   },
   twitter: {
     card: "summary_large_image",
     title: "HABUSH LABS — App & Marketing Studio",
     description:
       "We build apps, software, and market brands. A subsidiary of H3AT Studios.",
+    images: ["/og-image.png"],
   },
 };
 

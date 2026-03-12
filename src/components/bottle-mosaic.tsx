@@ -2,86 +2,220 @@
 
 import { useEffect, useRef } from "react";
 
-const CELL = 14;
-const FONT_SIZE = 12;
-const ROTATION_SPEED = 0.6;
+const CELL = 10;
+const FONT_SIZE = 9;
+const ROTATION_SPEED = 0.5;
 
-const CHARS = [" ", ".", "·", "∙", ":", "▪", "■", "◆", "◈", "⊗", "●", "◉"];
+// Dense character ramp for smooth shading
+const CHARS = " .·:∙∶▫▪◆■◈⊗●◉█";
 
-const palette: [number, number, number][] = [
-  [110, 55, 20],
-  [95, 45, 15],
-  [80, 38, 12],
-  [65, 30, 10],
-  [52, 24, 8],
-  [42, 18, 6],
-  [34, 14, 5],
-  [26, 10, 4],
-  [20, 8, 4],
-  [16, 6, 4],
-  [12, 5, 3],
-  [8, 4, 3],
-  [5, 3, 2],
+// Amber liquid palette — brighter, richer
+const liquidPalette: [number, number, number][] = [
+  [220, 160, 55],
+  [200, 140, 45],
+  [180, 120, 38],
+  [160, 100, 30],
+  [140, 82, 24],
+  [120, 66, 20],
+  [100, 52, 16],
+  [80, 40, 12],
+  [60, 28, 10],
+  [40, 18, 8],
 ];
 
-function getColor(t: number): [number, number, number] {
-  const clamped = Math.max(0, Math.min(1, t));
-  const idx = clamped * (palette.length - 1);
+// Glass palette
+const glassPalette: [number, number, number][] = [
+  [140, 130, 110],
+  [110, 100, 85],
+  [80, 72, 62],
+  [55, 50, 42],
+  [38, 34, 28],
+  [24, 22, 18],
+  [14, 12, 10],
+  [8, 7, 6],
+];
+
+// Snake palette — olive/dark with highlights
+const snakePalette: [number, number, number][] = [
+  [160, 140, 60],
+  [130, 115, 48],
+  [105, 92, 38],
+  [82, 72, 30],
+  [62, 54, 24],
+  [45, 38, 18],
+  [30, 26, 14],
+  [18, 16, 10],
+];
+
+function lerp3(p: [number, number, number][], t: number): [number, number, number] {
+  const c = Math.max(0, Math.min(1, t));
+  const idx = c * (p.length - 1);
   const i = Math.floor(idx);
   const f = idx - i;
-  const c1 = palette[Math.min(i, palette.length - 1)];
-  const c2 = palette[Math.min(i + 1, palette.length - 1)];
-  return [
-    c1[0] + (c2[0] - c1[0]) * f,
-    c1[1] + (c2[1] - c1[1]) * f,
-    c1[2] + (c2[2] - c1[2]) * f,
-  ];
+  const a = p[Math.min(i, p.length - 1)];
+  const b = p[Math.min(i + 1, p.length - 1)];
+  return [a[0] + (b[0] - a[0]) * f, a[1] + (b[1] - a[1]) * f, a[2] + (b[2] - a[2]) * f];
 }
 
-function smoothstep(edge0: number, edge1: number, x: number): number {
-  const t = Math.max(0, Math.min(1, (x - edge0) / (edge1 - edge0)));
+function smoothstep(e0: number, e1: number, x: number): number {
+  const t = Math.max(0, Math.min(1, (x - e0) / (e1 - e0)));
   return t * t * (3 - 2 * t);
 }
 
-function bottleRadius(y: number): number {
+// Habushu jar — wide body, short neck (scaled down to fit with padding)
+const JAR_SCALE = 0.55; // shrink entire jar to ~55% so it doesn't hit edges
+function jarRadius(y: number): number {
   if (y < 0 || y > 1) return 0;
-  // Base
-  if (y < 0.05) return 0.28 + smoothstep(0, 0.05, y) * 0.02;
-  // Body
-  if (y < 0.55) return 0.3;
-  // Shoulder
-  if (y < 0.7) {
-    const t = (y - 0.55) / 0.15;
-    return 0.3 + (0.1 - 0.3) * (0.5 - 0.5 * Math.cos(t * Math.PI));
+  let r = 0;
+  if (y < 0.04) r = smoothstep(0, 0.04, y) * 0.40;
+  else if (y < 0.07) r = 0.40;
+  // Wide body with barrel curve
+  else if (y < 0.60) {
+    const t = (y - 0.07) / 0.53;
+    r = 0.40 + Math.sin(t * Math.PI) * 0.04;
+  }
+  // Shoulder taper
+  else if (y < 0.72) {
+    const t = (y - 0.60) / 0.12;
+    const e = t * t * (3 - 2 * t);
+    r = 0.44 * (1 - e) + 0.11 * e;
   }
   // Neck
-  if (y < 0.88) return 0.1;
+  else if (y < 0.80) r = 0.11;
   // Lip
-  if (y < 0.92) {
-    const t = (y - 0.88) / 0.04;
-    return 0.1 + 0.03 * Math.sin(t * Math.PI);
+  else if (y < 0.84) {
+    const t = (y - 0.80) / 0.04;
+    r = 0.11 + 0.035 * Math.sin(t * Math.PI);
   }
-  // Cap
-  if (y < 0.98) return 0.11;
-  return 0;
+  // Cloth wrap — bulging, decorative
+  else if (y < 0.94) {
+    const t = (y - 0.84) / 0.10;
+    r = 0.15 + Math.sin(t * Math.PI) * 0.08;
+  }
+  // Tied top
+  else if (y < 1.0) {
+    const t = (y - 0.94) / 0.06;
+    r = 0.12 * (1 - t);
+  }
+  return r * JAR_SCALE;
 }
 
-// Primary light (upper-right-front)
-const lx = 0.5, ly = 0.3, lz = 0.8;
-const lLen = Math.sqrt(lx * lx + ly * ly + lz * lz);
-const lightDir = { x: lx / lLen, y: ly / lLen, z: lz / lLen };
+// Snake as a 3D helix — much thicker, check both front and back faces
+function snakeTest(nx: number, ny: number, theta: number): {
+  hit: boolean; dist: number; phase: number; depth: number;
+} {
+  if (ny < 0.06 || ny > 0.58) return { hit: false, dist: 999, phase: 0, depth: 0 };
 
-// Fill light (left side, softer)
-const flx = -0.6, fly = 0.1, flz = 0.5;
-const flLen = Math.sqrt(flx * flx + fly * fly + flz * flz);
-const fillLight = { x: flx / flLen, y: fly / flLen, z: flz / flLen };
+  const COILS = 5;
+  const SAMPLES = 120;
+  const THICKNESS = 0.045;
 
-// Background characters for atmosphere
-const BG_CHARS = [".", "·", "∙", ":"];
-const BG_DENSITY = 0.12; // fraction of background cells that get a character
+  let minDist = 999;
+  let bestPhase = 0;
+  let bestDepth = 0;
+  let hit = false;
+
+  for (let i = 0; i < SAMPLES; i++) {
+    const t = i / SAMPLES;
+    const sy = 0.08 + t * 0.48;
+    const angle = t * COILS * Math.PI * 2 + theta;
+
+    // Coil radius — scaled to fit inside smaller jar
+    const coilR = (0.20 + Math.sin(t * Math.PI) * 0.10) * JAR_SCALE;
+    const wobble = (Math.sin(t * 13) * 0.015 + Math.sin(t * 7) * 0.01) * JAR_SCALE;
+
+    const sx = Math.cos(angle) * (coilR + wobble);
+    const sz = Math.sin(angle) * (coilR + wobble);
+
+    const dx = nx - sx;
+    const dy = ny - sy;
+    const d = Math.sqrt(dx * dx + dy * dy);
+
+    // Thickness varies — fatter in middle, thinner at tail
+    const thick = THICKNESS * JAR_SCALE * (0.5 + 0.5 * Math.sin(t * Math.PI));
+
+    if (d < minDist) {
+      minDist = d;
+      bestPhase = t;
+      bestDepth = sz;
+    }
+
+    if (d < thick) {
+      hit = true;
+      if (d < minDist) {
+        minDist = d;
+        bestPhase = t;
+        bestDepth = sz;
+      }
+    }
+  }
+
+  return { hit, dist: minDist, phase: bestPhase, depth: bestDepth };
+}
+
+// Snake head — diamond/triangular, at top of last coil
+function headTest(nx: number, ny: number, theta: number): {
+  isHead: boolean; isEye: boolean; isTongue: boolean;
+} {
+  const t = 1.0; // end of snake
+  const angle = t * 5 * Math.PI * 2 + theta;
+  const hx = Math.cos(angle) * 0.14 * JAR_SCALE;
+  const hz = Math.sin(angle);
+  const hy = 0.54;
+
+  // Hide head when facing away
+  if (hz < -0.1) return { isHead: false, isEye: false, isTongue: false };
+
+  const dx = nx - hx;
+  const dy = ny - hy;
+
+  // Diamond head shape
+  const headW = 0.06 * JAR_SCALE;
+  const headH = 0.035 * JAR_SCALE;
+  if (Math.abs(dx) / headW + Math.abs(dy) / headH < 1) {
+    // Eyes — two dots near top of head
+    const eyeSpacing = 0.025 * JAR_SCALE;
+    const eyeY = hy + 0.008 * JAR_SCALE;
+    const isLeftEye = Math.abs(nx - (hx - eyeSpacing)) < 0.008 * JAR_SCALE && Math.abs(ny - eyeY) < 0.008 * JAR_SCALE;
+    const isRightEye = Math.abs(nx - (hx + eyeSpacing)) < 0.008 * JAR_SCALE && Math.abs(ny - eyeY) < 0.008 * JAR_SCALE;
+    if (isLeftEye || isRightEye) return { isHead: true, isEye: true, isTongue: false };
+    return { isHead: true, isEye: false, isTongue: false };
+  }
+
+  // Forked tongue — extends forward from head
+  const dir = Math.sign(Math.cos(angle)) || 1;
+  const tx = (nx - hx) * dir;
+  const ty = ny - hy;
+  if (tx > 0.02 * JAR_SCALE && tx < 0.08 * JAR_SCALE) {
+    const forkSpread = (tx - 0.02 * JAR_SCALE) * 0.5;
+    if (Math.abs(ty) < 0.005 * JAR_SCALE || // stem
+        (tx > 0.04 * JAR_SCALE && (Math.abs(ty - forkSpread) < 0.005 * JAR_SCALE || Math.abs(ty + forkSpread) < 0.005 * JAR_SCALE))) {
+      return { isHead: false, isEye: false, isTongue: true };
+    }
+  }
+
+  return { isHead: false, isEye: false, isTongue: false };
+}
+
+// Lighting
+const lightDir = (() => {
+  const x = 0.5, y = 0.3, z = 0.85;
+  const l = Math.sqrt(x * x + y * y + z * z);
+  return { x: x / l, y: y / l, z: z / l };
+})();
+
+const fillDir = (() => {
+  const x = -0.6, y = 0.1, z = 0.5;
+  const l = Math.sqrt(x * x + y * y + z * z);
+  return { x: x / l, y: y / l, z: z / l };
+})();
+
+const BG_CHARS = ".·∙:";
+const BG_DENSITY = 0.09;
 
 export default function BottleMosaic() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const mouseRef = useRef({ x: 0.5, y: 0.5 });
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -95,6 +229,14 @@ export default function BottleMosaic() {
     let rows = 0;
     let lastTime = 0;
 
+    const handleMouse = (e: MouseEvent) => {
+      const rect = canvas.getBoundingClientRect();
+      mouseRef.current = {
+        x: (e.clientX - rect.left) / rect.width,
+        y: (e.clientY - rect.top) / rect.height,
+      };
+    };
+
     const resize = () => {
       const rect = canvas.getBoundingClientRect();
       cols = Math.floor(rect.width / CELL);
@@ -105,6 +247,7 @@ export default function BottleMosaic() {
 
     resize();
     window.addEventListener("resize", resize);
+    window.addEventListener("mousemove", handleMouse);
 
     function draw(timestamp: number) {
       const dt = lastTime ? (timestamp - lastTime) / 1000 : 0.016;
@@ -113,10 +256,7 @@ export default function BottleMosaic() {
 
       const w = cols;
       const h = rows;
-      if (w === 0 || h === 0) {
-        animationId = requestAnimationFrame(draw);
-        return;
-      }
+      if (w === 0 || h === 0) { animationId = requestAnimationFrame(draw); return; }
 
       ctx!.fillStyle = "#000";
       ctx!.fillRect(0, 0, canvas!.width, canvas!.height);
@@ -126,112 +266,159 @@ export default function BottleMosaic() {
 
       const cosT = Math.cos(theta);
       const sinT = Math.sin(theta);
+      const tiltX = (mouseRef.current.x - 0.5) * 0.1;
 
-      // Bottle is centered horizontally, spans most of vertical space
-      const bottleScale = 0.85;
-      const centerX = w / 2;
-      const bottleHeight = h * bottleScale;
-      const offsetY = (h - bottleHeight) / 2;
+      const scale = 0.75;
+      const cx = w / 2;
+      const bh = h * scale;
+      const oy = (h - bh) / 2;
 
-      // Seed for stable background pattern
-      const seed = 42;
-      let rng = seed;
+      // Liquid surface
+      const liqTop = 0.58;
+      const slosh = Math.sin(theta * 2) * 0.015 + Math.sin(theta * 3) * 0.008;
 
       for (let row = 0; row < h; row++) {
-        const ny = 1 - (row - offsetY) / bottleHeight;
+        const ny = 1 - (row - oy) / bh;
 
         for (let col = 0; col < w; col++) {
-          const dx = col - centerX;
-          const nx = dx / bottleHeight;
+          const nx = (col - cx) / bh;
+          const R = (ny >= 0 && ny <= 1) ? jarRadius(ny) : 0;
+          if (R <= 0 || Math.abs(nx) > R) {
+            // Background
+            const rng = ((row * 311 + col * 173 + 42) * 16807) % 2147483647;
+            if (rng / 2147483647 > BG_DENSITY) continue;
+            const r2 = ((rng * 16807) % 2147483647) / 2147483647;
+            const bgCh = BG_CHARS[Math.floor(r2 * BG_CHARS.length)];
+            const wave = Math.sin(col * 0.12 + theta) * 0.2 + Math.sin(row * 0.1 - theta) * 0.15 +
+              Math.sin((col + row) * 0.06 + theta * 2) * 0.12;
+            const bgB = 0.06 + wave * 0.3;
+            if (bgB < 0.03) continue;
+            const [cr, cg, cb] = lerp3(liquidPalette, row / h * 0.5 + 0.5);
+            const a = Math.max(0.03, Math.min(0.15, bgB));
+            ctx!.fillStyle = `rgba(${cr | 0},${cg | 0},${cb | 0},${a.toFixed(2)})`;
+            ctx!.fillText(bgCh, col * CELL + CELL / 2, row * CELL + CELL / 2);
+            continue;
+          }
 
-          const R = (ny >= 0 && ny <= 1) ? bottleRadius(ny) : 0;
-          const isBottle = R > 0 && Math.abs(nx) <= R;
+          // Inside jar
+          const nxN = nx / R;
+          const nzN = Math.sqrt(Math.max(0, 1 - nxN * nxN));
 
-          if (isBottle) {
-            // --- BOTTLE RENDERING ---
-            const nxNorm = nx / R;
-            const nzNorm = Math.sqrt(Math.max(0, 1 - nxNorm * nxNorm));
+          const rnx = nxN * cosT - nzN * sinT + tiltX;
+          const rnz = nxN * sinT + nzN * cosT;
 
-            // Rotate normal by theta for spinning effect
-            const rnx = nxNorm * cosT - nzNorm * sinT;
-            const rnz = nxNorm * sinT + nzNorm * cosT;
+          // Lighting
+          const diff = Math.max(0, rnx * lightDir.x + rnz * lightDir.z);
+          const fillL = Math.max(0, rnx * fillDir.x + rnz * fillDir.z) * 0.3;
+          const hx2 = lightDir.x, hz2 = lightDir.z + 1;
+          const hL = Math.sqrt(hx2 * hx2 + hz2 * hz2);
+          const specDot = Math.max(0, (rnx * hx2 + rnz * hz2) / hL);
+          const spec = Math.pow(specDot, 18);
+          const spec2 = Math.pow(specDot, 4) * 0.1;
+          const rim = Math.pow(1 - Math.abs(nzN), 2.5) * 0.4;
 
-            // Key light (diffuse)
-            const diffuse = Math.max(
-              0,
-              rnx * lightDir.x + 0 * lightDir.y + rnz * lightDir.z
-            );
+          const liqLevel = liqTop + slosh * nxN;
+          const inLiquid = ny < liqLevel && ny > 0.05 && ny < 0.60;
+          const isCloth = ny > 0.84 && ny < 0.97;
 
-            // Fill light (softer, from left)
-            const fill = Math.max(
-              0,
-              rnx * fillLight.x + 0 * fillLight.y + rnz * fillLight.z
-            ) * 0.4;
+          // Snake checks
+          const snake = snakeTest(nx, ny, theta);
+          const head = headTest(nx, ny, theta);
 
-            // Specular (Blinn-Phong)
-            const hx = lightDir.x;
-            const hz = lightDir.z + 1;
-            const hLen = Math.sqrt(hx * hx + hz * hz);
-            const spec = Math.pow(
-              Math.max(0, (rnx * hx + rnz * hz) / hLen),
-              16
-            );
+          let brightness: number;
+          let r: number, g: number, b: number;
 
-            // Rim / Fresnel (both edges glow)
-            const rim = Math.pow(1 - Math.abs(nzNorm), 2.5) * 0.4;
+          if (head.isTongue && inLiquid) {
+            // Tongue — bright red
+            brightness = 0.8;
+            r = 200; g = 50; b = 35;
+          } else if (head.isEye) {
+            // Eyes — bright yellow
+            brightness = 1.0;
+            r = 220; g = 200; b = 50;
+          } else if ((head.isHead || snake.hit) && inLiquid) {
+            // Snake body
+            const snakeLight = 0.35 + diff * 0.3 + spec * 0.15 + rim * 0.25;
+            // Scale shimmer
+            const shimmer = Math.sin(snake.phase * 80 + theta) * 0.12 +
+              Math.sin(snake.phase * 40) * 0.08;
+            // Depth — back coils darker
+            const depthFade = snake.depth > 0 ? 1.0 : 0.6;
+            brightness = Math.min(1, (snakeLight + shimmer) * depthFade);
 
-            // Label pattern — visible stripes on the body
-            let labelBrightness = 0;
-            if (ny > 0.12 && ny < 0.48) {
-              const phi = Math.atan2(rnz, rnx);
-              const stripe = Math.sin(phi * 5) * 0.5 + 0.5;
-              labelBrightness = stripe * 0.18;
+            // Color bands on snake
+            const bandT = (Math.sin(snake.phase * 25) + 1) * 0.5;
+            if (bandT > 0.7) {
+              // Light band
+              const ct = (1 - brightness) * 0.3;
+              [r, g, b] = lerp3(snakePalette, ct);
+            } else {
+              // Dark band
+              const ct = 0.3 + (1 - brightness) * 0.4;
+              [r, g, b] = lerp3(snakePalette, ct);
             }
 
-            const brightness = Math.min(
-              1,
-              0.22 + diffuse * 0.45 + fill + spec * 0.3 + rim + labelBrightness
+            if (head.isHead) {
+              brightness = Math.min(1, brightness + 0.15);
+              [r, g, b] = lerp3(snakePalette, (1 - brightness) * 0.25);
+            }
+          } else if (isCloth) {
+            // Cloth/ribbon wrap — bold and visible
+            const phi = Math.atan2(rnz, rnx);
+            const pattern = Math.sin(phi * 5 + ny * 50) * 0.3 + Math.sin(phi * 8 - ny * 30) * 0.2;
+            brightness = Math.min(1, 0.55 + diff * 0.25 + pattern * 0.3 + rim * 0.2);
+
+            const clothT = (Math.sin(phi * 4 + ny * 25) + 1) * 0.5;
+            if (clothT > 0.65) {
+              // Red
+              r = (200 * brightness) | 0; g = (60 * brightness) | 0; b = (45 * brightness) | 0;
+            } else if (clothT > 0.35) {
+              // Gold
+              r = (220 * brightness) | 0; g = (175 * brightness) | 0; b = (55 * brightness) | 0;
+            } else {
+              // Deep red
+              r = (165 * brightness) | 0; g = (50 * brightness) | 0; b = (40 * brightness) | 0;
+            }
+          } else if (inLiquid) {
+            // Amber liquid — significantly brighter base
+            const caustic = Math.sin(nxN * 5 + theta * 3) * 0.05 + Math.sin(ny * 8 - theta * 2) * 0.04;
+            const edgeDark = nxN * nxN * 0.1;
+
+            brightness = Math.min(1,
+              0.40 + diff * 0.25 + fillL + spec * 0.2 + spec2 + rim * 0.5 + caustic - edgeDark
             );
 
-            // Character selection
-            const charIdx = Math.floor(brightness * (CHARS.length - 1));
-            const ch = CHARS[Math.min(charIdx, CHARS.length - 1)];
-            if (ch === " ") continue;
+            // Meniscus
+            if (Math.abs(ny - liqLevel) < 0.025) brightness += 0.12;
 
-            // Color: vertical position + brightness modulation
-            const colorT = (1 - ny) * 0.6 + (1 - brightness) * 0.25;
-            const [r, g, b] = getColor(colorT);
+            // Glow near snake
+            if (snake.dist < 0.12) brightness += (0.12 - snake.dist) * 1.2;
 
-            const dither = (Math.random() - 0.5) * 6;
-            ctx!.fillStyle = `rgb(${Math.max(0, Math.min(255, r + dither)) | 0},${Math.max(0, Math.min(255, g + dither)) | 0},${Math.max(0, Math.min(255, b + dither)) | 0})`;
-            ctx!.fillText(ch, col * CELL + CELL / 2, row * CELL + CELL / 2);
+            const ct = (1 - ny / 0.60) * 0.35 + (1 - brightness) * 0.25;
+            [r, g, b] = lerp3(liquidPalette, ct);
           } else {
-            // --- BACKGROUND ATMOSPHERE ---
-            rng = ((row * 311 + col * 173 + seed) * 16807) % 2147483647;
-            const rand1 = rng / 2147483647;
-            if (rand1 > BG_DENSITY) continue;
+            // Glass — above liquid / neck — needs to be visible to show jar shape
+            brightness = Math.min(1, 0.30 + diff * 0.2 + spec * 0.4 + spec2 + rim * 0.6);
 
-            rng = (rng * 16807) % 2147483647;
-            const rand2 = rng / 2147483647;
-            const bgChar = BG_CHARS[Math.floor(rand2 * BG_CHARS.length)];
+            // Neck/shoulder gets extra brightness so outline is clear
+            if (ny > 0.60 && ny < 0.84) {
+              // Outline the glass edges more
+              const edgeness = Math.pow(Math.abs(nxN), 4);
+              brightness += edgeness * 0.3;
+            }
 
-            // Animate brightness with slow wave
-            const wave =
-              Math.sin(col * 0.15 + theta * 0.8) * 0.2 +
-              Math.sin(row * 0.12 - theta * 0.5) * 0.15 +
-              Math.sin((col + row) * 0.08 + theta * 0.3) * 0.15;
-            const bgBrightness = 0.1 + wave * 0.4;
-            if (bgBrightness < 0.04) continue;
-
-            // Color based on position (same gradient, but very muted)
-            const bgNy = row / h;
-            const colorT = bgNy * 0.6 + 0.4;
-            const [r, g, b] = getColor(colorT);
-            const alpha = Math.max(0.05, Math.min(0.25, bgBrightness));
-
-            ctx!.fillStyle = `rgba(${r | 0},${g | 0},${b | 0},${alpha.toFixed(2)})`;
-            ctx!.fillText(bgChar, col * CELL + CELL / 2, row * CELL + CELL / 2);
+            const ct = 0.15 + (1 - brightness) * 0.4;
+            [r, g, b] = lerp3(glassPalette, ct);
           }
+
+          // Map brightness to character
+          const ci = Math.floor(brightness * (CHARS.length - 1));
+          const ch = CHARS[Math.min(ci, CHARS.length - 1)];
+          if (ch === " ") continue;
+
+          const d = (Math.random() - 0.5) * 3;
+          ctx!.fillStyle = `rgb(${Math.max(0, Math.min(255, r + d)) | 0},${Math.max(0, Math.min(255, g + d)) | 0},${Math.max(0, Math.min(255, b + d)) | 0})`;
+          ctx!.fillText(ch, col * CELL + CELL / 2, row * CELL + CELL / 2);
         }
       }
 
@@ -239,9 +426,9 @@ export default function BottleMosaic() {
     }
 
     animationId = requestAnimationFrame(draw);
-
     return () => {
       window.removeEventListener("resize", resize);
+      window.removeEventListener("mousemove", handleMouse);
       cancelAnimationFrame(animationId);
     };
   }, []);

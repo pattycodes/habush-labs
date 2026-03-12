@@ -31,9 +31,9 @@ const ventures = [
     tag: "ACTIVE",
     tagColor: "bg-emerald-800",
     stats: [
-      { value: "15M+", label: "VIEWS" },
-      { value: "$23K+", label: "MRR" },
-      { value: "4 MO", label: "LAUNCHED" },
+      { value: "14M+", label: "VIEWS" },
+      { value: "2 WK", label: "ACTIVE" },
+      { value: "1", label: "CAMPAIGN" },
     ],
   },
   {

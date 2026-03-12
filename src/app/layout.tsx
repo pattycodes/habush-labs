@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Space_Mono } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
+import PasswordGate from "@/components/password-gate";
 import "./globals.css";
 
 const spaceMono = Space_Mono({
@@ -38,7 +39,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${spaceMono.variable} antialiased`}>
-        {children}
+        <PasswordGate>
+          {children}
+        </PasswordGate>
         <Analytics />
       </body>
     </html>

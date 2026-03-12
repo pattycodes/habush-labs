@@ -210,8 +210,8 @@ const fillDir = (() => {
   return { x: x / l, y: y / l, z: z / l };
 })();
 
-const BG_CHARS = ".·∙:";
-const BG_DENSITY = 0.09;
+const BG_CHARS = ".·:∙∶+×◇◆▫▪■●◈⊗";
+const BG_DENSITY = 0.96; // near-total fill
 
 export default function BottleMosaic() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -284,18 +284,65 @@ export default function BottleMosaic() {
           const nx = (col - cx) / bh;
           const R = (ny >= 0 && ny <= 1) ? jarRadius(ny) : 0;
           if (R <= 0 || Math.abs(nx) > R) {
-            // Background
+            // Dense animated mosaic background
             const rng = ((row * 311 + col * 173 + 42) * 16807) % 2147483647;
-            if (rng / 2147483647 > BG_DENSITY) continue;
-            const r2 = ((rng * 16807) % 2147483647) / 2147483647;
-            const bgCh = BG_CHARS[Math.floor(r2 * BG_CHARS.length)];
-            const wave = Math.sin(col * 0.12 + theta) * 0.2 + Math.sin(row * 0.1 - theta) * 0.15 +
-              Math.sin((col + row) * 0.06 + theta * 2) * 0.12;
-            const bgB = 0.06 + wave * 0.3;
-            if (bgB < 0.03) continue;
-            const [cr, cg, cb] = lerp3(liquidPalette, row / h * 0.5 + 0.5);
-            const a = Math.max(0.03, Math.min(0.15, bgB));
-            ctx!.fillStyle = `rgba(${cr | 0},${cg | 0},${cb | 0},${a.toFixed(2)})`;
+            const rngNorm = rng / 2147483647;
+            if (rngNorm > BG_DENSITY) continue;
+
+            const r3 = ((rng * 48271) % 2147483647) / 2147483647;
+
+            // Animated character cycling — chars shift over time based on position
+            const charWave = Math.sin(col * 0.15 + row * 0.1 + theta * 2) * 0.5 + 0.5;
+            const charIdx = Math.floor((r3 + charWave) * BG_CHARS.length) % BG_CHARS.length;
+            const bgCh = BG_CHARS[charIdx];
+
+            // Multiple overlapping animated waves — all integer theta multiples for seamless loop
+            const wave1 = Math.sin(col * 0.12 + theta) * 0.18;
+            const wave2 = Math.sin(row * 0.10 - theta) * 0.15;
+            const wave3 = Math.sin((col + row) * 0.06 + theta * 2) * 0.13;
+            const wave4 = Math.sin((col - row) * 0.08 + theta * 3) * 0.10;
+            const wave5 = Math.sin(col * 0.04 + row * 0.03 + theta * 2) * 0.08;
+            // Ripple from center
+            const dcx = col - w / 2;
+            const dcy = row - h / 2;
+            const distC = Math.sqrt(dcx * dcx + dcy * dcy);
+            const ripple = Math.sin(distC * 0.08 - theta * 2) * 0.12;
+
+            const wave = wave1 + wave2 + wave3 + wave4 + wave5 + ripple;
+
+            // Vignette — darker edges
+            const vx = dcx / w;
+            const vy = dcy / h;
+            const vignette = 1 - Math.sqrt(vx * vx + vy * vy) * 0.5;
+
+            // Brightness: high base for dense fill + waves
+            const bgB = Math.max(0.12, Math.min(0.75, 0.40 + wave * 0.6 + vignette * 0.15 + (r3 - 0.5) * 0.08));
+
+            // Animated color — hue shifts with waves
+            const vertT = row / h;
+            const hueShift = Math.sin(col * 0.05 + theta) * 0.15 + Math.sin(row * 0.04 - theta) * 0.1;
+            const colorT = Math.max(0, Math.min(1, vertT + hueShift));
+
+            let cr: number, cg: number, cb: number;
+            if (colorT < 0.3) {
+              // Deep red zone
+              const t = colorT / 0.3;
+              cr = 110 + t * 50; cg = 38 + t * 25; cb = 38 - t * 8;
+            } else if (colorT < 0.6) {
+              // Orange zone
+              const t = (colorT - 0.3) / 0.3;
+              cr = 160 + t * 40; cg = 63 + t * 45; cb = 30 - t * 5;
+            } else {
+              // Bright amber zone
+              const t = (colorT - 0.6) / 0.4;
+              cr = 200 + t * 20; cg = 108 + t * 50; cb = 25 + t * 10;
+            }
+
+            cr = Math.min(255, (cr * bgB) | 0);
+            cg = Math.min(255, (cg * bgB) | 0);
+            cb = Math.min(255, (cb * bgB) | 0);
+
+            ctx!.fillStyle = `rgb(${cr},${cg},${cb})`;
             ctx!.fillText(bgCh, col * CELL + CELL / 2, row * CELL + CELL / 2);
             continue;
           }

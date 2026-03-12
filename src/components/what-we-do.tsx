@@ -27,7 +27,7 @@ export default function WhatWeDo() {
       id="what-we-do"
       className="relative bg-background-dark px-8 md:px-16 py-20 md:py-32 overflow-hidden"
     >
-      {/* Spinning bottle mosaic on right side */}
+      {/* Bottle mosaic — positioned right on desktop */}
       <div className="absolute top-0 right-0 w-1/3 h-full pointer-events-none hidden md:block">
         <BottleMosaic />
       </div>
@@ -63,6 +63,11 @@ export default function WhatWeDo() {
             </div>
           ))}
         </div>
+      </div>
+
+      {/* Bottle mosaic — full-width block on mobile, below content */}
+      <div className="relative w-full h-[50vh] mt-12 md:hidden">
+        <BottleMosaic />
       </div>
     </section>
   );

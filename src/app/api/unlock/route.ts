@@ -17,8 +17,12 @@ const REVEALED: Record<string, { title: string; description: string; bullets?: s
     ],
   },
   venture_2: {
-    title: "STEALTH APP",
-    description: "CAN'T SAY YET",
+    title: "PUDGY PENGUINS WORLD",
+    description: "CONTENT MARKETING CAMPAIGN FOR PUDGY PENGUINS",
+    bullets: [
+      "14M+ VIEWS IN 2 WEEKS",
+      "2 WEEKS ACTIVE CAMPAIGN",
+    ],
   },
   venture_3: {
     title: "RAPSTORIES.AI",

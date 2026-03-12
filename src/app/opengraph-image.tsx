@@ -17,7 +17,6 @@ export default function OgImage() {
           flexDirection: "column",
           justifyContent: "flex-end",
           padding: "72px 80px",
-          fontFamily: "monospace",
           position: "relative",
         }}
       >
@@ -28,86 +27,56 @@ export default function OgImage() {
             top: 0,
             left: 0,
             right: 0,
-            height: "4px",
+            height: "6px",
             background: "#C4581A",
           }}
         />
 
-        {/* Subtle grid lines */}
-        <div
-          style={{
-            position: "absolute",
-            inset: 0,
-            backgroundImage:
-              "linear-gradient(rgba(196,88,26,0.04) 1px, transparent 1px), linear-gradient(90deg, rgba(196,88,26,0.04) 1px, transparent 1px)",
-            backgroundSize: "60px 60px",
-          }}
-        />
-
-        <div style={{ display: "flex", flexDirection: "column", gap: "16px", position: "relative" }}>
+        <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
           {/* Label */}
-          <div
-            style={{
-              fontSize: "14px",
-              letterSpacing: "0.2em",
-              textTransform: "uppercase",
-              color: "#C4581A",
-              fontFamily: "monospace",
-            }}
-          >
-            &gt; HABUSH LABS
+          <div style={{ fontSize: "14px", color: "#C4581A", fontFamily: "monospace" }}>
+            {">"} HABUSH LABS
           </div>
 
-          {/* Main wordmark */}
+          {/* Line 1 */}
           <div
             style={{
               fontSize: "96px",
               fontWeight: 700,
-              letterSpacing: "-0.02em",
-              textTransform: "uppercase",
               color: "#c8c8c8",
               fontFamily: "monospace",
               lineHeight: 1,
             }}
           >
-            APP &amp; MARKETING
-            <br />
-            <span style={{ color: "#484848" }}>STUDIO</span>
+            APP {"&"} MARKETING
+          </div>
+
+          {/* Line 2 */}
+          <div
+            style={{
+              fontSize: "96px",
+              fontWeight: 700,
+              color: "#484848",
+              fontFamily: "monospace",
+              lineHeight: 1,
+              marginTop: "-8px",
+            }}
+          >
+            STUDIO
           </div>
 
           {/* Stats row */}
-          <div
-            style={{
-              display: "flex",
-              gap: "48px",
-              marginTop: "24px",
-            }}
-          >
+          <div style={{ display: "flex", gap: "48px", marginTop: "16px" }}>
             {[
               { value: "$5M+", label: "REVENUE GENERATED" },
               { value: "50M+", label: "VIEWS DRIVEN" },
               { value: "10+", label: "PRODUCTS LAUNCHED" },
             ].map((stat) => (
               <div key={stat.label} style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
-                <div
-                  style={{
-                    fontSize: "28px",
-                    fontWeight: 700,
-                    color: "#C4581A",
-                    fontFamily: "monospace",
-                  }}
-                >
+                <div style={{ fontSize: "28px", fontWeight: 700, color: "#C4581A", fontFamily: "monospace" }}>
                   {stat.value}
                 </div>
-                <div
-                  style={{
-                    fontSize: "11px",
-                    letterSpacing: "0.15em",
-                    textTransform: "uppercase",
-                    color: "#484848",
-                    fontFamily: "monospace",
-                  }}
-                >
+                <div style={{ fontSize: "12px", color: "#484848", fontFamily: "monospace" }}>
                   {stat.label}
                 </div>
               </div>
@@ -116,8 +85,6 @@ export default function OgImage() {
         </div>
       </div>
     ),
-    {
-      ...size,
-    }
+    { ...size }
   );
 }

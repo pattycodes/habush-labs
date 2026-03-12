@@ -16,6 +16,10 @@ const REVEALED: Record<string, { title: string; description: string; bullets?: s
       "SUCCESSFULLY EXITED FOR $52M",
     ],
   },
+  venture_2: {
+    title: "STEALTH APP",
+    description: "CAN'T SAY YET",
+  },
   venture_3: {
     title: "RAPSTORIES.AI",
     description: "CLOSED DOWN SAAS",
@@ -24,6 +28,19 @@ const REVEALED: Record<string, { title: string; description: string; bullets?: s
       "11K+ FOLLOWERS GAINED INSTANTLY",
       "15M+ VIEWS ACROSS PLATFORMS",
       "$8.4K REVENUE BEFORE SHUTDOWN",
+    ],
+  },
+  venture_4: {
+    title: "STEALTH SAAS CONTRACT",
+    description: "ONGOING CONTRACT STARTED JANUARY",
+  },
+  venture_5: {
+    title: "PERSONAL ACCOUNTS",
+    description: "AFFILIATE & TIKTOK SHOP",
+    bullets: [
+      "MULTIPLE ACCOUNTS ACROSS NICHES",
+      "RAN UP THE BAG THEN MOVED ON",
+      "$500K+ TOTAL REVENUE IN 6 MONTHS",
     ],
   },
 };

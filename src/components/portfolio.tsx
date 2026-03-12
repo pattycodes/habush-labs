@@ -4,11 +4,10 @@ import { useState } from "react";
 
 type RevealedData = Record<string, { title: string; description: string; bullets?: string[] }>;
 
-// Real names/descriptions never ship to the browser — fetched from server after auth
+// All names/descriptions live server-side only — fetched after auth
 const ventures = [
   {
     id: "venture_0",
-    blurName: true,
     tag: "ACTIVE",
     tagColor: "bg-emerald-800",
     stats: [
@@ -19,7 +18,6 @@ const ventures = [
   },
   {
     id: "venture_1",
-    blurName: true,
     tag: "EXITED",
     tagColor: "bg-yellow",
     stats: [
@@ -30,11 +28,8 @@ const ventures = [
   },
   {
     id: "venture_2",
-    blurName: false,
     tag: "ACTIVE",
     tagColor: "bg-emerald-800",
-    title: "STEALTH APP",
-    description: "CAN'T SAY YET",
     stats: [
       { value: "15M+", label: "VIEWS" },
       { value: "$23K+", label: "MRR" },
@@ -43,7 +38,6 @@ const ventures = [
   },
   {
     id: "venture_3",
-    blurName: true,
     tag: "CLOSED",
     tagColor: "bg-muted",
     stats: [
@@ -54,11 +48,8 @@ const ventures = [
   },
   {
     id: "venture_4",
-    blurName: false,
     tag: "ACTIVE",
     tagColor: "bg-emerald-800",
-    title: "STEALTH SAAS CONTRACT",
-    description: "ONGOING CONTRACT STARTED JANUARY",
     stats: [
       { value: "16M+", label: "VIEWS" },
       { value: "$9K+", label: "MRR" },
@@ -67,20 +58,12 @@ const ventures = [
   },
   {
     id: "venture_5",
-    blurName: false,
     tag: "CLOSED",
     tagColor: "bg-muted",
-    title: "PERSONAL ACCOUNTS",
-    description: "AFFILIATE & TIKTOK SHOP",
     stats: [
       { value: "$500K+", label: "REVENUE" },
       { value: "20M+", label: "VIEWS" },
       { value: "500+", label: "VIDEOS" },
-    ],
-    bullets: [
-      "MULTIPLE ACCOUNTS ACROSS NICHES",
-      "RAN UP THE BAG THEN MOVED ON",
-      "$500K+ TOTAL REVENUE IN 6 MONTHS",
     ],
   },
 ];
@@ -163,19 +146,12 @@ export default function Portfolio() {
 
       <div className="grid md:grid-cols-2 gap-1">
         {ventures.map((venture) => {
-          const isBlurred = venture.blurName;
           const revealedInfo = revealed?.[venture.id];
-          const isRevealed = !isBlurred || revealedInfo != null;
+          const isRevealed = revealedInfo != null;
 
-          const displayTitle = isBlurred
-            ? (revealedInfo?.title ?? null)
-            : (venture as { title?: string }).title;
-          const displayDescription = isBlurred
-            ? revealedInfo?.description
-            : (venture as { description?: string }).description;
-          const displayBullets = isBlurred
-            ? revealedInfo?.bullets
-            : (venture as { bullets?: string[] }).bullets;
+          const displayTitle = revealedInfo?.title ?? null;
+          const displayDescription = revealedInfo?.description;
+          const displayBullets = revealedInfo?.bullets;
 
           return (
             <div

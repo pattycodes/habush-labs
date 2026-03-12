@@ -168,7 +168,7 @@ export default function Portfolio() {
           const isRevealed = !isBlurred || revealedInfo != null;
 
           const displayTitle = isBlurred
-            ? (revealedInfo?.title ?? "███████████")
+            ? (revealedInfo?.title ?? null)
             : (venture as { title?: string }).title;
           const displayDescription = isBlurred
             ? revealedInfo?.description
@@ -184,11 +184,16 @@ export default function Portfolio() {
             >
               {/* Header */}
               <div className="flex items-start justify-between mb-4">
-                <h3
-                  className="text-lg md:text-xl font-mono font-bold uppercase text-foreground"
-                >
-                  {displayTitle}
-                </h3>
+                {displayTitle ? (
+                  <h3 className="text-lg md:text-xl font-mono font-bold uppercase text-foreground">
+                    {displayTitle}
+                  </h3>
+                ) : (
+                  <div className="flex flex-col gap-1.5 justify-center">
+                    <div className="h-3 w-36 bg-border rounded-none" />
+                    <div className="h-3 w-20 bg-border rounded-none" />
+                  </div>
+                )}
                 <span
                   className={`${venture.tagColor} text-black text-[9px] font-mono font-bold tracking-wider uppercase px-2.5 py-1`}
                 >

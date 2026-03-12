@@ -17,21 +17,8 @@ export default function OgImage() {
           flexDirection: "column",
           justifyContent: "flex-end",
           padding: "72px 80px",
-          position: "relative",
         }}
       >
-        {/* Orange accent bar */}
-        <div
-          style={{
-            position: "absolute",
-            top: 0,
-            left: 0,
-            right: 0,
-            height: "6px",
-            background: "#C4581A",
-          }}
-        />
-
         <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
           {/* Label */}
           <div style={{ fontSize: "14px", color: "#C4581A", fontFamily: "monospace" }}>

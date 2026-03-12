@@ -5,12 +5,15 @@ const REVEALED: Record<string, { title: string; description: string; bullets?: s
   venture_0: {
     title: "SOCIALFINDER.AI",
     description: "FIND ANYONE ONLINE WITH A SINGLE PHOTO",
+    bullets: [
+      "MARKETING CAMPAIGN BROUGHT IN 10K CUSTOMERS IN <2 MONTHS",
+      "5X ROAS ON UGC CONTENT RAN AS ADS",
+    ],
   },
   venture_1: {
     title: "TRANSPOSED.AI",
     description: "AI VOICE CLONING TECHNOLOGY PLATFORM. FIRST TO MARKET.",
     bullets: [
-      "CO-FOUNDER & CMO",
       "CELEBRITY FOLLOWS EXCEEDING 150M+ COMBINED FOLLOWERS",
       "FIRST TO MARKET AI VOICE CLONING",
       "SUCCESSFULLY EXITED FOR $52M",

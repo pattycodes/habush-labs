@@ -215,7 +215,7 @@ export default function Portfolio() {
       </div>
 
       {/* NDA note */}
-      <p className="text-xs font-mono text-muted mt-8 text-center uppercase">
+      <p className="text-sm font-mono text-foreground/60 font-bold mt-8 text-center uppercase tracking-wider">
         AND MANY MORE UNDER STRICT NDA
       </p>
     </section>

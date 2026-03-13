@@ -20,7 +20,7 @@ const REVEALED: Record<string, { title: string; description: string; bullets?: s
     ],
   },
   venture_2: {
-    title: "PUDGY PENGUINS WORLD",
+    title: "PUDGY PARTY",
     description: "CONTENT MARKETING CAMPAIGN FOR PUDGY PENGUINS",
     bullets: [
       "14M+ VIEWS IN 2 WEEKS",

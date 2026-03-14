@@ -205,7 +205,7 @@ function Services() {
         <p className="text-xs font-mono tracking-wider uppercase text-muted mb-8">
           &gt; SERVICES
         </p>
-        <div className="grid md:grid-cols-2 gap-1 md:gap-16 items-center">
+        <div className="flex flex-col-reverse md:grid md:grid-cols-2 gap-8 md:gap-16 items-center">
           <div className="space-y-1">
             {/* First card full width */}
             <div className="bg-black border border-border p-6 md:p-8 hover:border-yellow/30 transition-colors">
@@ -235,7 +235,7 @@ function Services() {
               ))}
             </div>
           </div>
-          <div className="mt-8 md:mt-0">
+          <div>
             <h2 className="text-2xl sm:text-3xl md:text-5xl lg:text-6xl font-mono font-bold uppercase leading-[1.15] tracking-tight md:text-right">
               WHAT YOU <span className="text-yellow">ACTUALLY GET</span>
               <br />

@@ -11,22 +11,19 @@ const spaceMono = Space_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "HABUSH LABS — App & Marketing Studio",
-  description:
-    "We build apps, software, and market brands. A subsidiary of H3AT Studios.",
+  title: "HABUSH.LABS",
+  description: "apps, software & marketing. done right.",
   openGraph: {
-    title: "HABUSH LABS — App & Marketing Studio",
-    description:
-      "We build apps, software, and market brands. A subsidiary of H3AT Studios.",
-    siteName: "HABUSH LABS",
+    title: "HABUSH.LABS",
+    description: "apps, software & marketing. done right.",
+    siteName: "HABUSH.LABS",
     type: "website",
-    images: [{ url: "/og-image.png" }],
+    images: [{ url: "/og-image.png", width: 1200, height: 630 }],
   },
   twitter: {
     card: "summary_large_image",
-    title: "HABUSH LABS — App & Marketing Studio",
-    description:
-      "We build apps, software, and market brands. A subsidiary of H3AT Studios.",
+    title: "HABUSH.LABS",
+    description: "apps, software & marketing. done right.",
     images: ["/og-image.png"],
   },
 };

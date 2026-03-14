@@ -11,7 +11,10 @@ export default function PasswordGate({ children }: { children: React.ReactNode }
   const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
-    if (sessionStorage.getItem("hb_auth") === "1") {
+    if (
+      sessionStorage.getItem("hb_auth") === "1" ||
+      window.location.pathname.startsWith("/japan")
+    ) {
       setUnlocked(true);
     } else {
       inputRef.current?.focus();
